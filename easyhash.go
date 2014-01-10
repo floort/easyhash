@@ -54,6 +54,8 @@ func hashSaltedPassword(password, salt string) (string, error) {
 	return fmt.Sprintf("%s%s%s", salt, Seperator, base64.StdEncoding.EncodeToString(hash)), nil
 }
 
+
+// Hashes passwords with scrypt and a unique salt.
 func HashPassword(password string) (string, error) {
 	salt, err := newSalt()
 	if err != nil {
@@ -62,6 +64,7 @@ func HashPassword(password string) (string, error) {
 	return hashSaltedPassword(password, salt)
 }
 
+// Check if password matches the given hashvalue.
 func CheckPassword(password, hash string) (bool, error) {
 	split := strings.Split(hash, Seperator)
 	if len(split) != 2 {
