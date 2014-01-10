@@ -24,7 +24,7 @@ import (
 )
 
 const SaltLength = 42 // In bytes
-const Seperator = ":"
+const Seperator = ":" // Seperates the salt from the hash
 
 func newSalt() (string, error) {
 	b := make([]byte, SaltLength)
