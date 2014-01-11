@@ -27,6 +27,7 @@ const SaltLength = 42 // In bytes
 const Seperator = ":" // Seperates the salt from the hash
 
 func newSalt() (string, error) {
+	// Read SaltLength cryptographically random bytes
 	b := make([]byte, SaltLength)
 	n, err := rand.Read(b)
 	if err != nil {
@@ -35,6 +36,7 @@ func newSalt() (string, error) {
 	if n != SaltLength {
 		return "", errors.New("Could not read the expected amount of random bytes.")
 	}
+	// Return the base64 encoded salt.
 	str := base64.StdEncoding.EncodeToString(b)
 	return str, nil
 }
@@ -57,6 +59,7 @@ func hashSaltedPassword(password, salt string) (string, error) {
 
 // Hashes passwords with scrypt and a unique salt.
 func HashPassword(password string) (string, error) {
+	// Each hash should be done with a fresh salt.
 	salt, err := newSalt()
 	if err != nil {
 		return "", err
@@ -66,16 +69,20 @@ func HashPassword(password string) (string, error) {
 
 // Check if password matches the given hashvalue.
 func CheckPassword(password, hash string) (bool, error) {
+	// Hash is a string formatted as "<salt>:<hash>"
 	split := strings.Split(hash, Seperator)
 	if len(split) != 2 {
 		return false, errors.New("Invalid password hash format.")
 	}
+	// Hash the password with the salt from the stored hash
 	testhash, err := hashSaltedPassword(password, split[0])
 	if err != nil {
 		return false, err
 	}
 	if testhash == hash {
+		// Password hashes to the required hash
 		return true, nil
 	}
+	// Password does not match
 	return false, nil
 }
