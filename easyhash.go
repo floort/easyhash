@@ -12,6 +12,10 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
+// Package easyhash implements simple and secure password hashing base on the
+// Password-Based Key Derivation Function 2 (PBKDF2) using the SHA256 hash.
+// PBKDF2 is a NIST standard:
+// http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf
 package easyhash
 
 import (
