@@ -15,15 +15,16 @@
 package easyhash
 
 import (
-	"code.google.com/p/go.crypto/scrypt"
+	"code.google.com/p/go.crypto/pbkdf2"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"fmt"
 	"strings"
 )
 
-const SaltLength = 42 // In bytes
+const SaltLength = 32 // In bytes
 const Seperator = ":" // Seperates the salt from the hash
 
 func newSalt() (string, error) {
@@ -49,13 +50,9 @@ func hashSaltedPassword(password, salt string) (string, error) {
 	if len(saltbytes) != SaltLength {
 		return "", errors.New("Salt is not of the expected length")
 	}
-	hash, err := scrypt.Key([]byte(password), saltbytes, 16384, 8, 1, SaltLength)
-	if err != nil {
-		return "", err
-	}
+	hash := pbkdf2.Key([]byte(password), saltbytes, 4096, SaltLength, sha256.New)
 	return fmt.Sprintf("%s%s%s", salt, Seperator, base64.StdEncoding.EncodeToString(hash)), nil
 }
-
 
 // Hashes passwords with scrypt and a unique salt.
 func HashPassword(password string) (string, error) {
